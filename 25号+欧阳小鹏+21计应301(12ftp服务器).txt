@@ -1,0 +1,44 @@
+
+yum clean all
+yum -y install vsftpd
+useradd -s /sbin/nologin team01
+useradd -s /sbin/nologin team02
+passwd team01
+passwd team02
+mkdir /web/www/html -p
+vim /etc/vsftpd/vsftpd.conf
+	修改:
+		anonymous=NO
+	添加：
+		local_root=/web/www/html
+		chroot_local_user=NO
+		chroot_list_enable=YES
+		chroot_list_file=/etc/vsftpd/chroot_list
+		allow_writeable_chroot=YES
+
+vim /etc/vsftpd/chroot_list:
+		team01
+		team02
+
+chmod 757 /web/www/html
+vim /etc/shells:
+	添加：
+	/sbin/nologin
+
+cd /web/www/html
+touch test01.111
+systemctl restart vsftpd
+firewall-cmd --add-service=ftp --permanent
+firewall-cmd --reload
+setenforce 0
+    		
+
+
+
+第二个虚拟机中：
+yum -y install ftp
+ftp 第一个虚拟机ip地址
+pwd：查看路径
+ls：查看当前路径文件
+
+		
